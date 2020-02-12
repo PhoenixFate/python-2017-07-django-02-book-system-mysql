@@ -21,4 +21,5 @@ urlpatterns = [
     path('index/', views.index),  # 图书信息页面
     path('create/', views.create),  # 新增图书
     path("delete/<book_id>", views.delete),  # 删除图书
+    path('area', views.get_areas),
 ]

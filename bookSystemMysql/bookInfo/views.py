@@ -148,6 +148,8 @@ def get_areas(request):
     # 1.获取广州市的信息
     guang_zhou_shi = Area.objects.get(title="广州市")
     # 2.查询广州市的上级地区
-
-
-    return None
+    parent = guang_zhou_shi.parent
+    # 3.查询广州市的下级地区
+    children_area = guang_zhou_shi.area_set.all()
+    return render(request, "bookInfo/area.html",
+                  {"area": guang_zhou_shi, "parent": parent, "children_area": children_area})

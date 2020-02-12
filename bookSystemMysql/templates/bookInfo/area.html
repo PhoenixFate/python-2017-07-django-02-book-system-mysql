@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Area</title>
+</head>
+<body>
+<h1>当前地区</h1>
+{{ area.title }}<br>
+<h1>父级地区</h1>
+{{ parent.title }}<br>
+<h1>下级地区</h1>
+<ul>
+    {% for children in children_area %}
+        <li>{{ children.title }}</li>
+    {% endfor %}
+</ul>
+</body>
+</html>

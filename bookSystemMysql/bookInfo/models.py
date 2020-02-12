@@ -2,6 +2,28 @@ from django.db import models
 
 
 # Create your models here.
+class BookManager(models.Manager):
+    """图书管理类"""
+
+    # 1.改变查询的结果集
+    # 重写父类的方法
+    def all(self):
+        # 调用父类的all方法
+        book_list = super().all()  # QuerySet
+        book_list = book_list.filter(is_delete=False)
+        return book_list
+
+    # 2.封装其他函数
+    def create_book(self, title, publish_date):
+        # 这样写的好处是在Book类名发生变化的时候，不需要改变代码
+        model_class = self.model  # self.model 就是Book
+        book = model_class()
+        book.title = title
+        book.publish_date = publish_date
+        book.save()
+        return book
+
+
 class Book(models.Model):
     """图书模型"""
     # 常用属性：
@@ -30,6 +52,14 @@ class Book(models.Model):
     comment_count = models.IntegerField(default=0)
     # 是否删除
     is_delete = models.BooleanField(default=False)
+
+    # 如果定义了Manager对象，则Book.objects不再默认提供
+    # object_book = models.Manager()  # 自定义一个Manager类对象
+    objects = BookManager()
+
+    # 指定表名！！！！！！！！
+    class Meta:
+        db_table = 'book'  # 指定模型类对应的表名
 
 
 class Hero(models.Model):
@@ -81,7 +111,7 @@ class EmployeeDetailInfo(models.Model):
     # 联系地址
     address = models.CharField(max_length=1024)
     # 关联属性
-    employee_basic = models.OneToOneField('EmployeeBasicInfo', on_delete=models.CASCADE,)
+    employee_basic = models.OneToOneField('EmployeeBasicInfo', on_delete=models.CASCADE, )
 
 
 # 自关联
@@ -91,4 +121,4 @@ class Area(models.Model):
     """地区模型类"""
     title = models.CharField(max_length=100)
     # 关系属性，代表当前地区的父级属性
-    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE,)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, )
