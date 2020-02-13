@@ -1,8 +1,10 @@
+from django.core import serializers
 from django.shortcuts import render, redirect
 from bookInfo.models import Book, Hero, Area
 from datetime import date
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.db.models import Q, F, Count, Sum, Avg, Max, Min
+import json
 
 
 # Create your views here.
@@ -153,3 +155,72 @@ def get_areas(request):
     children_area = guang_zhou_shi.area_set.all()
     return render(request, "bookInfo/area.html",
                   {"area": guang_zhou_shi, "parent": parent, "children_area": children_area})
+
+
+def book_json(request):
+    book_list = Book.objects.all()
+    temp = serializers.serialize('json', book_list, ensure_ascii=False)
+    print(type(temp))
+    print(serializers.serialize('json', book_list, ensure_ascii=False))
+    temp2 = json.loads(serializers.serialize('json', book_list, ensure_ascii=False))
+    print(type(temp2))
+    print(json.loads(serializers.serialize('json', book_list, ensure_ascii=False)))
+    return JsonResponse({
+        'code': '200',
+        'data': json.loads(serializers.serialize('json', book_list, ensure_ascii=False)),
+        'msg': '获取book列表成功'
+    })
+
+
+def login(request):
+    """显示登录页面"""
+    return render(request, "bookInfo/login.html")
+
+
+def login_check(request):
+    """校验登录"""
+    # request.POST 保存的是post提交的参数
+    # request.GET 保存的是get提交的参数
+    request_path = request.path
+    print(request_path)
+    method_type = request.method
+    print(method_type)
+
+    # 1.获取用户名和密码
+    username = request.GET.get("username")
+    password = request.GET.get("password")
+    print("username: %s " % username)
+    print("password: %s " % password)
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+    gender = request.POST.get('gender')
+    is_tuanyuan = request.POST.get('is_tuanyuan')
+    joy = request.POST.getlist('joy')
+    city = request.POST.get('city')
+    more_text = request.POST.get('more_text')
+    print("username: %s " % username)
+    print("password: %s " % password)
+    print(gender)
+    print(is_tuanyuan)
+    print(joy)
+    print(city)
+    print(more_text)
+    # 2.进行登录的校验
+
+    # 3.返回应答
+    return render(request, "bookInfo/success.html", {"username": username, "password": password})
+
+
+def test_ajax(request):
+    """返回test_ajax页面"""
+    return render(request, "bookInfo/test_ajax.html")
+
+
+def ajax_handler(request):
+    """处理ajax请求"""
+    book_list = Book.objects.all()
+    return JsonResponse({
+        'code': '200',
+        'data': json.loads(serializers.serialize('json', book_list, ensure_ascii=False)),
+        'msg': '获取book列表成功'
+    })

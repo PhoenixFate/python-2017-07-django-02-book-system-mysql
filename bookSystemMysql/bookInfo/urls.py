@@ -14,12 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf.urls import url
 from django.urls import path, include
 from bookInfo import views
 
 urlpatterns = [
     path('index/', views.index),  # 图书信息页面
     path('create/', views.create),  # 新增图书
-    path("delete/<book_id>", views.delete),  # 删除图书
-    path('area', views.get_areas),
+    path("delete/<book_id>/", views.delete),  # 删除图书
+    path('area/', views.get_areas),
+    path('book/list/', views.book_json),
+    path('login/', views.login),
+    path('login_check/', views.login_check),
+    path('test_ajax/', views.test_ajax),
+    path('ajax_handler', views.ajax_handler),
 ]

@@ -22,9 +22,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '*&8m25nbx@&^g1u-335)7@kk%u!zbv2)=fzx2+@!%!7k9t$5k)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# 调试模式
 DEBUG = True
+# DEBUG = False
 
-ALLOWED_HOSTS = []
+# 允许哪些ip访问网址 DEBUG = False之后必须改
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -42,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -120,4 +124,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+
+# 静态文件的前缀
 STATIC_URL = '/static/'
+
+# 静态文件的路径
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+

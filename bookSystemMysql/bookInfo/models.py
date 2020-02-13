@@ -58,8 +58,8 @@ class Book(models.Model):
     objects = BookManager()
 
     # 指定表名！！！！！！！！
-    class Meta:
-        db_table = 'book'  # 指定模型类对应的表名
+    # class Meta:
+    #     db_table = 'book'  # 指定模型类对应的表名
 
 
 class Hero(models.Model):

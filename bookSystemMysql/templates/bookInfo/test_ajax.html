@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="application/javascript" src="{% static '/js/jquery-1.12.4.min.js' %}"></script>
+    {#    <script type="application/javascript" src="/js/jquery-1.12.4.min.js"></script>#}
+
+    <title>ajax</title>
+</head>
+<script>
+    $(function () {
+        //绑定btn_ajax的点击事件
+        $("#btn_ajax").click(function () {
+            $.ajax({
+                url: '/ajax_handler',
+                type: "get",
+                dateType: "json",
+                // 默认true，异步；false同步
+                async: true,
+            }).success(function (data) {
+                //处理数据
+                console.log(data)
+                $("#message").show().html("显示消息")
+            })
+        })
+    })
+</script>
+<style>
+    #message {
+        display: none;
+    }
+</style>
+<body>
+<input type="button" id="btn_ajax" value="发起ajax请求"><br>
+STATIC_URL: {{ STATIC_URL }} <br>
+static: {{ static }} <br>
+{% static '/js/jquery-1.12.4.min.js' %}<br>
+<div id="message">
+
+</div>
+</body>
+</html>
