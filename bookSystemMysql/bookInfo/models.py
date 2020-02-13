@@ -122,3 +122,5 @@ class Area(models.Model):
     title = models.CharField(max_length=100)
     # 关系属性，代表当前地区的父级属性
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, )
+
+
