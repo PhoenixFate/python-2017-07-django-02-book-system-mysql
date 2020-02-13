@@ -124,3 +124,4 @@ class Area(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, )
 
 
+
