@@ -19,6 +19,7 @@ from django.urls import path, include
 from bookInfo import views
 
 urlpatterns = [
+    path("/", views.index),
     path('index/', views.index),  # 图书信息页面
     path('create/', views.create),  # 新增图书
     path("delete/<book_id>/", views.delete),  # 删除图书
@@ -28,4 +29,8 @@ urlpatterns = [
     path('login_check/', views.login_check),
     path('test_ajax/', views.test_ajax),
     path('ajax_handler', views.ajax_handler),
+    path("set_cookie/", views.set_cookie),
+    path("get_cookie/", views.get_cookie),
+    path("set_session/", views.set_session),
+    path("get_session/", views.get_session)
 ]

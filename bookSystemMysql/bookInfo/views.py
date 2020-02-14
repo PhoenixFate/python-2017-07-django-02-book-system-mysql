@@ -1,8 +1,8 @@
 from django.core import serializers
 from django.shortcuts import render, redirect
 from bookInfo.models import Book, Hero, Area
-from datetime import date
-from django.http import HttpResponseRedirect, JsonResponse
+from datetime import date, datetime, timedelta
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.db.models import Q, F, Count, Sum, Avg, Max, Min
 import json
 
@@ -174,7 +174,17 @@ def book_json(request):
 
 def login(request):
     """显示登录页面"""
-    return render(request, "bookInfo/login.html")
+    # 判断用户是否已经登录
+    if request.session.get("user"):
+        return redirect("/index")
+
+    # 取出cookie中的值
+    if "username_cookie" in request.COOKIES:
+        username_cookie = request.COOKIES["username_cookie"]
+    else:
+        username_cookie = ""
+
+    return render(request, "bookInfo/login.html", {"username_cookie": username_cookie})
 
 
 def login_check(request):
@@ -187,12 +197,9 @@ def login_check(request):
     print(method_type)
 
     # 1.获取用户名和密码
-    username = request.GET.get("username")
-    password = request.GET.get("password")
-    print("username: %s " % username)
-    print("password: %s " % password)
     username = request.POST.get("username")
     password = request.POST.get("password")
+    remember = request.POST.get("remember")
     gender = request.POST.get('gender')
     is_tuanyuan = request.POST.get('is_tuanyuan')
     joy = request.POST.getlist('joy')
@@ -200,15 +207,25 @@ def login_check(request):
     more_text = request.POST.get('more_text')
     print("username: %s " % username)
     print("password: %s " % password)
-    print(gender)
-    print(is_tuanyuan)
-    print(joy)
-    print(city)
-    print(more_text)
+    print("remember: ", remember)
+    print("gender: ", gender)
+    print("is_tuanyuan: ", is_tuanyuan)
+    print("joy: ", joy)
+    print("city: ", city)
+    print("more_text: ", more_text)
     # 2.进行登录的校验
+    if username == "admin" and password == "123456":
+        response = redirect("/index/")
+        # 判断是否记住用户名
+        if remember == "on":
+            response.set_cookie("username_cookie", username, max_age=7 * 24 * 3600)
 
+        # 记住登录状态
+        request.session["user"] = {"username": username, "password": password}
+
+        return response
     # 3.返回应答
-    return render(request, "bookInfo/success.html", {"username": username, "password": password})
+    return redirect("/login/")
 
 
 def test_ajax(request):
@@ -224,3 +241,56 @@ def ajax_handler(request):
         'data': json.loads(serializers.serialize('json', book_list, ensure_ascii=False)),
         'msg': '获取book列表成功'
     })
+
+
+def set_cookie(request):
+    """设置cookie"""
+    response = HttpResponse("设置cookie")
+    # 设置cookie需要一个HttpResponse对象，或者HttpResponse子类对象
+    # HttpResponseRedirect, JsonResponse 都是HttpResponse的子类
+    # cookie有过期时间，默认是关闭浏览器，cookie过期
+    response.set_cookie("first_cookie", "first_cookie")
+    # max_age 单位秒
+    response.set_cookie("second_cookie", "first_cookie", max_age=14 * 24 * 3600)
+    # expires 最后的过期时间
+    response.set_cookie("third_cookie", "third_cookie", expires=datetime.now() + timedelta(days=14))
+
+    return response
+
+
+def get_cookie(request):
+    """获得cookie"""
+    # 取出cookie中的值
+    first_cookie = request.COOKIES.get("first_cookie")
+    second_cookie = request.COOKIES.get("second_cookie")
+    third_cookie = request.COOKIES.get("third_cookie")
+    return HttpResponse(first_cookie + "; " + second_cookie + "; " + third_cookie)
+
+
+def set_session(request):
+    """设置session"""
+    request.session["username"] = "tom"
+    request.session["age"] = 20
+
+    # 设置cookie：sessionid=xxx的过期时间
+    # value，如果是一个正整数，则在value秒之后过期
+    # 如果value=0，关闭浏览器之后过期
+    # None，默认14天
+    request.session.set_expiry(None)
+    return HttpResponse("设置session")
+
+
+def get_session(request):
+    """获得session"""
+    username = request.session.get("username")
+    age = request.session.get("age")
+    return HttpResponse(username + " : " + str(age))
+
+
+def clear_session(request):
+    """清除session"""
+    # request.session.flush(): 清除 session中所有的key和value
+    request.session.flush()
+    # request.session.clear(): 清除 整条session会话
+    # request.session.clear()
+    return HttpResponse("清除成功")
