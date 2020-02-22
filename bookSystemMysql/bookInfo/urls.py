@@ -16,10 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path, include
-from bookInfo import views
+from . import views
 
 urlpatterns = [
-    path("/", views.index),
+    path("", views.index),
     path('index/', views.index),  # 图书信息页面
     path('create/', views.create),  # 新增图书
     path("delete/<book_id>/", views.delete),  # 删除图书
